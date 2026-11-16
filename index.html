@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Little Universe | Feriane & Mariane</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --soft-pink: #ffd6e0;
+      --deep-pink: #e87a90;
+      --lavender: #e2d1f9;
+      --baby-blue: #c8e7ff;
+      --pastel-yellow: #fff3b0;
+      --mint-green: #d0f4de;
+      --light-orange: #ffdac1;
+      --cream-bg: #fffdf9;
+      --card-bg: #ffffff;
+      --text-main: #4a3f4b;
+      --text-muted: #7d6e7e;
+
+      --rainbow-gradient: linear-gradient(90deg, #ffadad, #ffd6a5, #fdffb6, #caffbf, #9bf6ff, #bdb2ff, #ffc6ff);
+      --soft-bg-gradient: linear-gradient(135deg, #fff5f7 0%, #f8f4ff 35%, #f0f9ff 70%, #fffdf5 100%);
+
+      --shadow-soft: 0 12px 35px rgba(149, 125, 173, 0.16);
+      --shadow-card: 0 8px 24px rgba(232, 122, 144, 0.12);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      min-height: 100%;
+      font-family: var(--font-sans);
+      color: var(--text-main);
+      background: var(--soft-bg-gradient);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ENTRANCE SCREEN */
+    .entrance-overlay {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      padding: 1.25rem; background: var(--soft-bg-gradient); z-index: 1000;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .entrance-overlay.unlocking { opacity: 0; transform: scale(1.04); pointer-events: none; }
+    .entrance-card {
+      position: relative; width: 100%; max-width: 440px; background: var(--card-bg);
+      border-radius: 26px; padding: 2.5rem 1.75rem 2.25rem; text-align: center;
+      box-shadow: var(--shadow-soft); border: 2px solid rgba(255, 214, 224, 0.65); overflow: hidden;
+    }
+    .rainbow-ribbon { position: absolute; top: 0; left: 0; right: 0; height: 8px; background: var(--rainbow-gradient); }
+    .lock-badge {
+      width: 54px; height: 54px; margin: 0 auto 1rem; border-radius: 50%;
+      background: linear-gradient(135deg, var(--soft-pink), var(--lavender)); color: #ffffff;
+      font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 16px rgba(232, 122, 144, 0.25);
+    }
+    .entrance-title { font-family: var(--font-serif); font-size: clamp(1.6rem, 5vw, 2rem); margin-bottom: 0.5rem; }
+    .entrance-subtitle { font-size: 0.96rem; color: var(--text-muted); margin-bottom: 1.75rem; line-height: 1.5; }
+    .pin-group { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; }
+    .pin-box {
+      width: 44px; height: 52px; border-radius: 14px; border: 2px solid var(--lavender);
+      background: var(--cream-bg); text-align: center; font-size: 1.4rem; font-weight: 700; color: var(--deep-pink); outline: none;
+    }
+    .pin-box:focus { border-color: var(--deep-pink); background: #ffffff; box-shadow: 0 0 0 4px rgba(255, 214, 224, 0.45); }
+    .error-text { min-height: 1.35rem; font-size: 0.88rem; font-weight: 600; color: #d9536f; margin-bottom: 1rem; }
+    .btn-primary {
+      width: 100%; padding: 0.9rem 1.5rem; border: none; border-radius: 999px;
+      background: linear-gradient(135deg, #f497b6 0%, #c8a2c8 100%); color: #ffffff;
+      font-family: var(--font-sans); font-size: 1rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(232, 122, 144, 0.28); transition: transform 0.2s ease;
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-secondary {
+      padding: 0.6rem 1.25rem; border: 2px solid var(--deep-pink); border-radius: 999px;
+      background: transparent; color: var(--deep-pink); font-family: var(--font-sans);
+      font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-secondary:hover { background: var(--soft-pink); }
+    .btn-danger {
+      padding: 0.35rem 0.75rem; border: 1.5px solid #d9536f; border-radius: 999px;
+      background: transparent; color: #d9536f; font-family: var(--font-sans);
+      font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-danger:hover { background: #ffeef3; }
+    .password-hint { margin-top: 1.35rem; font-size: 0.88rem; font-style: italic; color: var(--text-muted); }
+
+    /* FLOATING HEARTS */
+    #hearts-container { position: fixed; inset: 0; pointer-events: none; z-index: 2000; overflow: hidden; }
+    .floating-heart {
+      position: absolute; bottom: -40px; font-size: 1.5rem;
+      animation: floatUp 2.6s ease-out forwards; opacity: 0;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.7) rotate(0deg); opacity: 0; }
+      15% { opacity: 0.95; }
+      100% { transform: translateY(-105vh) scale(1.25) rotate(20deg); opacity: 0; }
+    }
+
+    /* APP & NAVBAR */
+    .app-hidden { display: none; opacity: 0; }
+    .app-visible { display: block; animation: fadeInApp 0.9s ease forwards; }
+    @keyframes fadeInApp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .navbar {
+      position: sticky; top: 0; left: 0; right: 0; background: rgba(255, 253, 249, 0.92);
+      backdrop-filter: blur(10px); border-bottom: 1px solid rgba(226, 209, 249, 0.5); z-index: 900;
+    }
+    .nav-container { max-width: 1100px; margin: 0 auto; padding: 0.85rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; color: var(--deep-pink); text-decoration: none; display: flex; align-items: center; gap: 0.35rem; }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { text-decoration: none; font-size: 0.92rem; font-weight: 600; color: var(--text-muted); transition: color 0.2s ease; }
+    .nav-links a:hover { color: var(--deep-pink); }
+    .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; color: var(--deep-pink); cursor: pointer; }
+    .mobile-nav-drawer { display: none; flex-direction: column; background: var(--card-bg); border-bottom: 1px solid var(--lavender); padding: 1rem 1.5rem; gap: 0.75rem; }
+    .mobile-nav-drawer.open { display: flex; }
+    .mobile-link { text-decoration: none; font-weight: 600; color: var(--text-main); padding: 0.5rem 0; }
+
+    /* HOMEPAGE CONTAINER */
+    .homepage-container { max-width: 1000px; margin: 0 auto; padding: 2rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 3.5rem; }
+
+    /* HERO SECTION */
+    .hero-section { text-align: center; position: relative; padding-top: 1rem; }
+    .hero-header-badge {
+      display: inline-block; padding: 0.35rem 1rem; background: var(--soft-pink); color: var(--deep-pink);
+      border-radius: 999px; font-size: 0.85rem; font-weight: 700; margin-bottom: 1.25rem;
+    }
+    .lego-couple-wrapper { position: relative; max-width: 480px; margin: 0 auto 1.75rem; padding: 1rem; }
+    .sunset-glow {
+      position: absolute; inset: 0; background: radial-gradient(circle, rgba(255, 218, 193, 0.8) 0%, rgba(255, 173, 173, 0.35) 60%, transparent 85%);
+      border-radius: 50%; filter: blur(20px); z-index: 0;
+    }
+    .lego-image-frame {
+      position: relative; z-index: 1; background: var(--card-bg); padding: 12px; border-radius: 28px;
+      box-shadow: var(--shadow-soft); border: 3px solid rgba(255, 214, 224, 0.85); transform: rotate(-0.5deg);
+    }
+    .lego-couple-img { width: 100%; height: auto; display: block; border-radius: 20px; object-fit: cover; }
+    .change-hero-btn {
+      margin-top: 0.75rem; padding: 0.45rem 1rem; font-size: 0.82rem; border-radius: 999px;
+      border: 1.5px dashed var(--deep-pink); background: #fff5f8; color: var(--deep-pink);
+      font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    }
+    .change-hero-btn:hover { background: var(--soft-pink); }
+    .couple-names { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 2.75rem); margin-bottom: 0.35rem; }
+    .couple-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+    .anniversary-date-badge {
+      display: inline-block; font-size: 0.95rem; font-weight: 600; color: var(--deep-pink);
+      background: var(--lavender); padding: 0.3rem 0.9rem; border-radius: 999px;
+    }
+
+    /* COUNTER SECTION */
+    .counter-section {
+      background: var(--card-bg); border-radius: 32px; padding: 2.5rem 1.5rem;
+      box-shadow: var(--shadow-card); border: 2px solid rgba(226, 209, 249, 0.5);
+    }
+    .section-title-wrap { text-align: center; margin-bottom: 2rem; }
+    .section-title-wrap h2 { font-family: var(--font-serif); font-size: clamp(1.6rem, 4vw, 2.1rem); margin-bottom: 0.35rem; }
+    .section-title-wrap p { color: var(--text-muted); font-size: 0.95rem; }
+    .counter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+    .counter-card {
+      background: var(--cream-bg); border-radius: 20px; padding: 1.25rem 0.65rem; text-align: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04); border: 2px solid rgba(255, 255, 255, 0.8);
+    }
+    .counter-card.pink { background: #fff0f3; border-color: #ffccd5; }
+    .counter-card.lavender { background: #f4f0ff; border-color: #e2d1f9; }
+    .counter-card.blue { background: #f0f7ff; border-color: #c8e7ff; }
+    .counter-card.yellow { background: #fffde6; border-color: #fff3b0; }
+    .counter-card.mint { background: #f0faf4; border-color: #d0f4de; }
+    .counter-card.orange { background: #fff4ee; border-color: #ffdac1; }
+    .counter-card.pink-alt { background: #ffeef3; border-color: #ffd6e0; }
+    .counter-heart { font-size: 0.8rem; color: var(--deep-pink); display: block; margin-bottom: 0.25rem; }
+    .counter-number { font-family: var(--font-serif); font-size: 1.45rem; font-weight: 700; display: block; margin-bottom: 0.2rem; word-break: break-word; }
+    .counter-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; }
+    .counter-sub { font-size: 0.72rem; color: var(--deep-pink); font-weight: 600; display: block; margin-top: 2px; }
+    .total-days-banner {
+      text-align: center; font-size: 1.05rem; background: linear-gradient(135deg, rgba(255, 214, 224, 0.4), rgba(226, 209, 249, 0.4));
+      padding: 0.85rem 1.25rem; border-radius: 999px;
+    }
+    .total-days-banner strong { color: var(--deep-pink); font-family: var(--font-serif); font-size: 1.25rem; }
+
+    /* SPOTIFY-STYLE PLAYLIST MUSIC PLAYER */
+    .spotify-player-box {
+      background: linear-gradient(135deg, #1e1b24 0%, #2a2438 100%);
+      border-radius: 28px; padding: 2rem; color: #ffffff; box-shadow: var(--shadow-card);
+      border: 2px solid #e87a90; position: relative; overflow: hidden;
+    }
+    .spotify-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .spotify-title { font-family: var(--font-serif); font-size: 1.35rem; color: #ffd6e0; display: flex; align-items: center; gap: 0.5rem; }
+    .spotify-card {
+      background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); border-radius: 20px;
+      padding: 1.25rem; display: flex; align-items: center; gap: 1rem; border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .spotify-album-art {
+      width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #f497b6, #c8a2c8);
+      display: flex; align-items: center; justify-content: center; font-size: 1.75rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .spotify-album-art.playing {
+      animation: pulseGlow 2s infinite ease;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(244, 151, 182, 0.3); }
+      50% { transform: scale(1.03); box-shadow: 0 6px 20px rgba(244, 151, 182, 0.7); }
+    }
+    .spotify-info { flex-grow: 1; min-width: 0; }
+    .spotify-song-title { font-size: 1.05rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .spotify-artist { font-size: 0.85rem; color: #b8a9c9; margin-top: 0.15rem; }
+    .spotify-controls { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; justify-content: center; }
+    .player-btn {
+      background: none; border: none; color: #ffd6e0; font-size: 1.25rem; cursor: pointer; transition: transform 0.2s ease;
+    }
+    .player-btn:hover { transform: scale(1.15); color: #ffffff; }
+    .play-pause-btn {
+      width: 52px; height: 52px; border-radius: 50%; background: #f497b6; border: none; color: #ffffff;
+      font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(244, 151, 182, 0.4); transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .play-pause-btn:hover { transform: scale(1.08); background: #e87a90; }
+
+    /* PLAYLIST DRAWER */
+    .playlist-drawer {
+      margin-top: 1.25rem; background: rgba(0, 0, 0, 0.25); border-radius: 16px; padding: 1rem; max-height: 180px; overflow-y: auto;
+    }
+    .playlist-item {
+      display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: 10px;
+      margin-bottom: 0.35rem; cursor: pointer; transition: background 0.2s ease; font-size: 0.9rem;
+    }
+    .playlist-item:hover { background: rgba(255, 255, 255, 0.1); }
+    .playlist-item.active { background: rgba(244, 151, 182, 0.25); color: #ffd6e0; font-weight: 700; }
+    .playlist-song-info { display: flex; flex-direction: column; min-width: 0; flex-grow: 1; margin-right: 0.5rem; }
+    .playlist-song-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .playlist-song-artist { font-size: 0.75rem; color: #b8a9c9; }
+
+    /* POLAROID SCRAPBOOK GALLERY */
+    .section-header-flex { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+    .polaroid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.75rem; }
+    .polaroid-card {
+      background: #ffffff; padding: 12px 12px 20px 12px; border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(149, 125, 173, 0.18); border: 1px solid #f0e6ec;
+      transition: transform 0.25s ease; position: relative;
+    }
+    .polaroid-card:hover { transform: translateY(-5px) rotate(1deg); }
+    .polaroid-img-wrap { width: 100%; height: 200px; overflow: hidden; border-radius: 6px; background: #faf5f8; margin-bottom: 10px; }
+    .polaroid-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .polaroid-caption { font-family: var(--font-serif); font-size: 1.05rem; color: var(--text-main); text-align: center; margin-bottom: 4px; }
+    .polaroid-date { font-size: 0.8rem; color: var(--text-muted); text-align: center; display: block; }
+    .delete-item-btn {
+      position: absolute; top: 8px; right: 8px; background: rgba(255, 255, 255, 0.85); border: none;
+      border-radius: 50%; width: 28px; height: 28px; cursor: pointer; color: #d9536f; font-weight: bold;
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    /* LITTLE NOTES WALL */
+    .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .note-card {
+      background: #fffff8; border-radius: 20px; padding: 1.5rem; box-shadow: var(--shadow-card);
+      border: 2px solid var(--pastel-yellow); position: relative; transition: transform 0.2s ease;
+    }
+    .note-card:hover { transform: translateY(-3px); }
+    .note-author { font-size: 0.82rem; font-weight: 700; color: var(--deep-pink); text-transform: uppercase; margin-bottom: 0.3rem; }
+    .note-title { font-family: var(--font-serif); font-size: 1.2rem; margin-bottom: 0.5rem; }
+    .note-text { font-size: 0.92rem; color: var(--text-main); line-height: 1.5; margin-bottom: 1rem; }
+    .note-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 0.75rem; }
+    .note-date { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* OUR JOURNEY TIMELINE */
+    .timeline-container { position: relative; padding-left: 2rem; border-left: 3px dashed var(--deep-pink); display: flex; flex-direction: column; gap: 2rem; }
+    .timeline-item { position: relative; background: var(--card-bg); padding: 1.5rem; border-radius: 20px; box-shadow: var(--shadow-card); border: 2px solid var(--soft-pink); }
+    .timeline-item::before {
+      content: '♡'; position: absolute; left: -2.45rem; top: 1.2rem; width: 24px; height: 24px;
+      background: var(--deep-pink); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+    }
+    .timeline-date { font-size: 0.85rem; font-weight: 700; color: var(--deep-pink); margin-bottom: 0.25rem; }
+    .timeline-title { font-family: var(--font-serif); font-size: 1.25rem; margin-bottom: 0.4rem; }
+    .timeline-desc { font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; }
+    .timeline-img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; margin-top: 0.75rem; }
+
+    /* SPECIAL DAYS & COUNTDOWNS */
+    .days-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+    .day-card {
+      background: var(--card-bg); border-radius: 22px; padding: 1.5rem; box-shadow: var(--shadow-card);
+      border: 2px solid var(--lavender); text-align: center; position: relative;
+    }
+    .day-card h4 { font-family: var(--font-serif); font-size: 1.2rem; margin-bottom: 0.25rem; color: var(--deep-pink); }
+    .day-date { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem; }
+    .day-countdown { font-size: 1.1rem; font-weight: 700; color: var(--text-main); background: var(--cream-bg); padding: 0.5rem; border-radius: 12px; }
+
+    /* RANDOM MEMORY BOX */
+    .random-memory-box {
+      background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+      border-radius: 28px; padding: 2rem; text-align: center; box-shadow: var(--shadow-card); border: 2px dashed #c8a2c8;
+    }
+    .random-memory-box h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 0.35rem; }
+    .random-memory-box p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .random-preview-card {
+      margin-top: 1.5rem; background: var(--card-bg); padding: 1.5rem; border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08); border: 2px solid var(--soft-pink); text-align: left; position: relative;
+    }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(74, 63, 75, 0.5); backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center; z-index: 3000; padding: 1rem;
+    }
+    .modal-card {
+      background: var(--card-bg); width: 100%; max-width: 440px; border-radius: 24px; padding: 2rem;
+      box-shadow: var(--shadow-soft); border: 2px solid var(--soft-pink); position: relative; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-card h3 { font-family: var(--font-serif); margin-bottom: 1rem; color: var(--deep-pink); }
+    .form-group { margin-bottom: 1rem; text-align: left; }
+    .form-group label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-muted); }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 0.75rem; border-radius: 12px; border: 2px solid var(--lavender);
+      background: var(--cream-bg); font-family: var(--font-sans); font-size: 0.95rem; outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--deep-pink); background: #ffffff; }
+    .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .hidden { display: none !important; }
+
+    /* QUOTE & FOOTER */
+    .quote-scrapcard {
+      background: linear-gradient(135deg, #fff0f3 0%, #f4effc 100%); border-radius: 28px; padding: 2.5rem 2rem;
+      text-align: center; box-shadow: var(--shadow-card); border: 2px solid #e87a90; position: relative; overflow: hidden;
+    }
+    .site-footer { text-align: center; padding-top: 2rem; font-size: 0.88rem; color: var(--text-muted); border-top: 1px solid rgba(226, 209, 249, 0.5); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .homepage-container { padding: 1.25rem 1rem 3rem; gap: 2.5rem; }
+      .counter-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="hearts-container" aria-hidden="true"></div>
+
+  <!-- PASSWORD ENTRANCE -->
+  <section id="entrance-screen" class="entrance-overlay">
+    <div class="entrance-card">
+      <div class="rainbow-ribbon"></div>
+      <div class="lock-badge">♡</div>
+      <h1 class="entrance-title">A Little Place Just for Us</h1>
+      <p class="entrance-subtitle">Some memories are too special to be shared with everyone.</p>
+
+      <form id="passcode-form" novalidate>
+        <div class="pin-group">
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" required />
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" required />
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" required />
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" required />
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" required />
+          <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" required />
+        </div>
+        <p id="error-message" class="error-text"></p>
+        <button type="submit" class="btn-primary">Enter Our Universe ♡</button>
+      </form>
+      <p class="password-hint">Think about the day our forever began. ♡</p>
+    </div>
+  </section>
+
+  <!-- MAIN APP -->
+  <main id="app-content" class="app-hidden">
+    <header class="navbar">
+      <div class="nav-container">
+        <a href="#home" class="nav-logo">♡ Our Little Universe</a>
+        <nav class="nav-links">
+          <a href="#home">Home</a>
+          <a href="#memories">Memories</a>
+          <a href="#notes">Notes</a>
+          <a href="#journey">Journey</a>
+          <a href="#special-days">Special Days</a>
+        </nav>
+        <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
+      </div>
+      <div class="mobile-nav-drawer" id="mobile-drawer">
+        <a href="#home" class="mobile-link">Home</a>
+        <a href="#memories" class="mobile-link">Memories</a>
+        <a href="#notes" class="mobile-link">Notes</a>
+        <a href="#journey" class="mobile-link">Journey</a>
+        <a href="#special-days" class="mobile-link">Special Days</a>
+      </div>
+    </header>
+
+    <div class="homepage-container" id="home">
+
+      <!-- HERO SECTION -->
+      <section class="hero-section">
+        <div class="hero-header-badge">♡ Our Little Universe ♡</div>
+        <div class="lego-couple-wrapper">
+          <div class="sunset-glow"></div>
+          <div class="lego-image-frame">
+            <img 
+              id="lego-couple-display"
+              src="assets/characters/lego-couple.png" 
+              onerror="this.style.display='none';document.getElementById('lego-placeholder').style.display='block';"
+              alt="Feriane & Mariane 3D LEGO Couple" 
+              class="lego-couple-img" 
+            />
+            <div id="lego-placeholder" style="display:none; padding: 2.5rem 1.5rem; background: #fff0f3; border-radius: 20px; color: var(--deep-pink);">
+              <p style="font-size: 2.5rem; margin-bottom: 0.5rem;">👩‍❤️‍👩🧱</p>
+              <p style="font-weight: 600; margin-bottom: 0.75rem;">Click below to upload your LEGO couple photo right here! ♡</p>
+            </div>
+            <input type="file" id="hero-photo-input" accept="image/*" style="display:none;" />
+            <button type="button" class="change-hero-btn" onclick="document.getElementById('hero-photo-input').click()">
+              📸 Set / Change Our LEGO Couple Photo
+            </button>
+          </div>
+        </div>
+        <h1 class="couple-names">Feriane ♡ Mariane</h1>
+        <p class="couple-subtitle">Two girls, one story, countless memories.</p>
+        <p class="anniversary-date-badge">Together since August 13, 2023[cite: 3]</p>
+      </section>
+
+      <!-- LIVE RELATIONSHIP COUNTER -->
+      <section class="counter-section">
+        <div class="section-title-wrap">
+          <h2>Look How Far We'Ve Come</h2>
+          <p>Every second with you is another memory worth keeping.</p>
+        </div>
+
+        <div class="counter-grid">
+          <div class="counter-card pink">
+            <span class="counter-heart">♡</span>
+            <span class="counter-number" id="c-years">3</span>
+            <span class="counter-label">Years</span>
+            <span class="counter-sub" id="c-years-dec">(3.26 yrs)</span>
+          </div>
+          <div class="counter-card lavender">
+            <span class="counter-heart">♡</span>
+            <span class="counter-number" id="c-months">39</span>
+            <span class="counter-label">Months</span>
+            <span class="counter-sub" id="c-months-rem">&amp; 3 days</span>
+          </div>
+          <div class="counter-card blue">
+            <span class="counter-heart">♡</span>
+            <span class="counter-number" id="c-weeks">170</span>
+            <span class="counter-label">Weeks</span>
+            <span class="counter-sub" id="c-weeks-rem">&amp; 1 day</span>
+          </div>
+          <div class="counter-card yellow">
+            <span class="counter-heart">♡</span>
+            <span class="counter-number" id="c-days">1,191</span>
+            <span class="counter-label">Total Days</span>
+            <span class="counter-sub">Together</span>
+          </div>
+          <div class="counter-card mint">
+            <span class="counter-heart">♡</span>
+            <span class="counter-number" id="c-hours">28,601</span>
+            <span class="counter-label">Total Hours</span>
+            <span class="counter-sub">Of love</span>
+          </div>
+          <div class="counter-card orange">
+            <span class="counter-heart">♡</span>
+            <span class="counter-number" id="c-minutes">1,716,087</span>
+            <span class="counter-label">Total Minutes</span>
+            <span class="counter-sub">Of smiles</span>
+          </div>
+          <div class="counter-card pink-alt">
+            <span class="counter-heart">♡</span>
+            <span class="counter-number" id="c-seconds">0</span>
+            <span class="counter-label">Total Seconds</span>
+            <span class="counter-sub">&amp; counting</span>
+          </div>
+        </div>
+
+        <p class="total-days-banner">That's <strong id="c-total-days">1,191</strong> days of choosing each other.</p>
+      </section>
+
+      <!-- SPOTIFY-STYLE PLAYLIST MUSIC PLAYER -->
+      <section class="spotify-player-box">
+        <div class="rainbow-ribbon"></div>
+        <div class="spotify-header">
+          <div class="spotify-title">♫ Our Little Playlist</div>
+          <button class="btn-secondary" id="open-song-modal" style="border-color: #ffd6e0; color: #ffd6e0; padding: 0.4rem 1rem; font-size: 0.85rem;">+ Add Song</button>
+        </div>
+        <div class="spotify-card">
+          <div class="spotify-album-art" id="album-art-icon">🎧</div>
+          <div class="spotify-info">
+            <div class="spotify-song-title" id="display-song-title">No song in playlist</div>
+            <div class="spotify-artist" id="display-artist">Click '+ Add Song' to add music ♡</div>
+          </div>
+          <div class="spotify-controls" style="margin-top:0; gap: 0.75rem;">
+            <button class="player-btn" id="prev-song-btn" title="Previous Song">⏮</button>
+            <button class="play-pause-btn" id="play-pause-btn" title="Play / Pause">▶</button>
+            <button class="player-btn" id="next-song-btn" title="Next Song">⏭</button>
+          </div>
+        </div>
+        <div class="playlist-drawer" id="playlist-drawer"></div>
+        <audio id="custom-audio" preload="auto"></audio>
+      </section>
+
+      <!-- EDITABLE PHOTO GALLERY SECTION -->
+      <section id="memories">
+        <div class="section-header-flex">
+          <div>
+            <h2>Recently Captured ♡</h2>
+            <p>Upload and manage our polaroid memories</p>
+          </div>
+          <button class="btn-secondary" id="open-upload-modal">+ Add Photo Memory</button>
+        </div>
+        <div class="polaroid-grid" id="polaroid-gallery"></div>
+      </section>
+
+      <!-- LITTLE NOTES & WALL -->
+      <section id="notes">
+        <div class="section-header-flex">
+          <div>
+            <h2>Letters, Thoughts &amp; Little Reminders</h2>
+            <p>Everything we want to say and never forget</p>
+          </div>
+          <button class="btn-secondary" id="open-note-modal">+ Write Note</button>
+        </div>
+        <div class="notes-grid" id="notes-wall"></div>
+      </section>
+
+      <!-- OUR JOURNEY TIMELINE -->
+      <section id="journey">
+        <div class="section-header-flex">
+          <div>
+            <h2>Our Love Story Timeline</h2>
+            <p>Every milestone that brought us here</p>
+          </div>
+          <button class="btn-secondary" id="open-journey-modal">+ Add Milestone</button>
+        </div>
+        <div class="timeline-container" id="timeline-list"></div>
+      </section>
+
+      <!-- SPECIAL DAYS & COUNTDOWNS -->
+      <section id="special-days">
+        <div class="section-header-flex">
+          <div>
+            <h2>Special Days &amp; Countdowns</h2>
+            <p>Dates and celebrations that mean everything</p>
+          </div>
+          <button class="btn-secondary" id="open-day-modal">+ Add Special Date</button>
+        </div>
+        <div class="days-grid" id="days-grid"></div>
+      </section>
+
+      <!-- RANDOM MEMORY BOX -->
+      <section class="random-memory-section">
+        <div class="random-memory-box">
+          <h3>Feeling Nostalgic? ♡</h3>
+          <p>Open a random page from our scrapbook and relive a surprise memory!</p>
+          <button id="random-memory-btn" class="btn-primary" style="max-width:260px; margin:0 auto;">✨ Open a Random Memory</button>
+          <div id="random-preview" class="random-preview-card hidden">
+            <span id="close-random" style="position:absolute; top:8px; right:12px; cursor:pointer; font-weight:bold;">&times;</span>
+            <div id="random-body"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SPECIAL MESSAGE -->
+      <section class="quote-scrapcard">
+        <div class="rainbow-ribbon"></div>
+        <h2>"Of all the places in this world, this little universe will always be ours."</h2>
+        <p style="font-weight: 600; color: var(--deep-pink); margin-top: 0.75rem;">Two girls. One love story. A lifetime of memories. ♡</p>
+      </section>
+
+      <footer class="site-footer">
+        <p>Built with endless love for Feriane &amp; Mariane ♡ August 13, 2023[cite: 3]</p>
+      </footer>
+    </div>
+  </main>
+
+  <!-- MODALS -->
+  <div id="song-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="rainbow-ribbon"></div>
+      <h3>Add Song to Playlist ♫</h3>
+      <form id="song-form">
+        <div class="form-group"><label>Song Title</label><input type="text" id="s-title" placeholder="Enter song title..." required /></div>
+        <div class="form-group"><label>Artist / Dedication</label><input type="text" id="s-artist" placeholder="Enter artist name..." required /></div>
+        <div class="form-group"><label>Audio File (MP3)</label><input type="file" id="s-file" accept="audio/*" required /></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="c-song" style="flex:1;">Cancel</button>
+          <button type="submit" class="btn-primary" style="flex:1;">Add to Playlist</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="upload-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="rainbow-ribbon"></div>
+      <h3>Add New Memory ♡</h3>
+      <form id="photo-form">
+        <div class="form-group"><label>Select Photo</label><input type="file" id="p-file" accept="image/*" required /></div>
+        <div class="form-group"><label>Caption</label><input type="text" id="p-caption" placeholder="Our sunset picnic ♡" required /></div>
+        <div class="form-group"><label>Date</label><input type="date" id="p-date" required /></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary" id="c-photo" style="flex:1;">Cancel</button><button type="submit" class="btn-primary" style="flex:1;">Save</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="note-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="rainbow-ribbon"></div>
+      <h3>Write a Note ♡</h3>
+      <form id="note-form">
+        <div class="form-group"><label>Author</label><select id="n-author"><option value="Feriane">Feriane</option><option value="Mariane">Mariane</option></select></div>
+        <div class="form-group"><label>Title</label><input type="text" id="n-title" placeholder="Thinking of you..." required /></div>
+        <div class="form-group"><label>Message</label><textarea id="n-text" rows="4" placeholder="Write your thoughts..." required></textarea></div>
+        <div class="form-group"><label>Optional Photo</label><input type="file" id="n-file" accept="image/*" /></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary" id="c-note" style="flex:1;">Cancel</button><button type="submit" class="btn-primary" style="flex:1;">Publish</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="journey-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="rainbow-ribbon"></div>
+      <h3>Add Milestone ♡</h3>
+      <form id="journey-form">
+        <div class="form-group"><label>Date / Milestone Title</label><input type="text" id="j-date" placeholder="June 30, 2024" required /></div>
+        <div class="form-group"><label>Event Heading</label><input type="text" id="j-title" placeholder="Our First Date" required /></div>
+        <div class="form-group"><label>Description</label><textarea id="j-desc" rows="3" placeholder="Describe this milestone..." required></textarea></div>
+        <div class="form-group"><label>Optional Photo</label><input type="file" id="j-file" accept="image/*" /></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary" id="c-journey" style="flex:1;">Cancel</button><button type="submit" class="btn-primary" style="flex:1;">Add</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="day-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="rainbow-ribbon"></div>
+      <h3>Add Special Date ♡</h3>
+      <form id="day-form">
+        <div class="form-group"><label>Occasion Name</label><input type="text" id="d-title" placeholder="Anniversary / Birthday" required /></div>
+        <div class="form-group"><label>Date</label><input type="date" id="d-date" required /></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary" id="c-day" style="flex:1;">Cancel</button><button type="submit" class="btn-primary" style="flex:1;">Save</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. PASSCODE
+      const SECRET_CODE = "081323";
+      const entranceScreen = document.getElementById("entrance-screen");
+      const appContent = document.getElementById("app-content");
+      const passcodeForm = document.getElementById("passcode-form");
+      const pinBoxes = Array.from(document.querySelectorAll(".pin-box"));
+      const errorMessage = document.getElementById("error-message");
+      const heartsContainer = document.getElementById("hearts-container");
+
+      if (pinBoxes.length > 0) pinBoxes[0].focus();
+
+      pinBoxes.forEach((box, idx) => {
+        box.addEventListener("input", (e) => {
+          const val = e.target.value.replace(/\D/g, "").slice(0, 1);
+          e.target.value = val;
+          if (val && idx < pinBoxes.length - 1) pinBoxes[idx + 1].focus();
+        });
+        box.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && !box.value && idx > 0) pinBoxes[idx - 1].focus();
+        });
+      });
+
+      passcodeForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const code = pinBoxes.map(b => b.value).join("");
+        if (code === SECRET_CODE) {
+          entranceScreen.classList.add("unlocking");
+          setTimeout(() => {
+            entranceScreen.style.display = "none";
+            appContent.classList.remove("app-hidden");
+            appContent.classList.add("app-visible");
+            spawnHearts(25);
+          }, 750);
+        } else {
+          errorMessage.textContent = "Oops! That's not quite our little secret. Try again, love. ♡";
+          pinBoxes.forEach(b => b.value = "");
+          pinBoxes[0].focus();
+        }
+      });
+
+      function spawnHearts(count) {
+        for (let i = 0; i < count; i++) {
+          const h = document.createElement("span");
+          h.className = "floating-heart";
+          h.textContent = ["♡", "💖", "✨"][Math.floor(Math.random() * 3)];
+          h.style.left = `${Math.random() * 95 + 2}%`;
+          heartsContainer.appendChild(h);
+          setTimeout(() => h.remove(), 3000);
+        }
+      }
+
+      // 2. HERO LEGO PHOTO DIRECT UPLOAD & STORAGE
+      const heroImg = document.getElementById("lego-couple-display");
+      const heroPlaceholder = document.getElementById("lego-placeholder");
+      const heroPhotoInput = document.getElementById("hero-photo-input");
+
+      const savedHeroPhoto = localStorage.getItem("our_universe_hero_photo");
+      if (savedHeroPhoto) {
+        heroImg.src = savedHeroPhoto;
+        heroImg.style.display = "block";
+        heroPlaceholder.style.display = "none";
+      }
+
+      heroPhotoInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          localStorage.setItem("our_universe_hero_photo", ev.target.result);
+          heroImg.src = ev.target.result;
+          heroImg.style.display = "block";
+          heroPlaceholder.style.display = "none";
+          spawnHearts(15);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // 3. MULTI-SONG PLAYLIST MUSIC PLAYER
+      const songModal = document.getElementById("song-modal");
+      const openSongModalBtn = document.getElementById("open-song-modal");
+      
+      openSongModalBtn.addEventListener("click", () => {
+        document.getElementById("s-title").value = "";
+        document.getElementById("s-artist").value = "";
+        document.getElementById("s-file").value = "";
+        songModal.classList.remove("hidden");
+      });
+
+      document.getElementById("c-song").addEventListener("click", () => songModal.classList.add("hidden"));
+
+      const audioPlayer = document.getElementById("custom-audio");
+      const playPauseBtn = document.getElementById("play-pause-btn");
+      const prevSongBtn = document.getElementById("prev-song-btn");
+      const nextSongBtn = document.getElementById("next-song-btn");
+      const albumArtIcon = document.getElementById("album-art-icon");
+      const playlistDrawer = document.getElementById("playlist-drawer");
+
+      let playlist = JSON.parse(localStorage.getItem("our_universe_playlist") || "[]");
+      let currentTrackIndex = 0;
+
+      function renderPlaylist() {
+        const titleEl = document.getElementById("display-song-title");
+        const artistEl = document.getElementById("display-artist");
+
+        if (playlist.length === 0) {
+          titleEl.textContent = "No song in playlist";
+          artistEl.textContent = "Click '+ Add Song' to add music ♡";
+          audioPlayer.src = "";
+          playlistDrawer.innerHTML = `<div style="text-align:center; color:#b8a9c9; font-size:0.85rem; padding:0.5rem;">Playlist is empty. Add your favorite tracks!</div>`;
+          return;
+        }
+
+        if (currentTrackIndex >= playlist.length) currentTrackIndex = 0;
+        const currentSong = playlist[currentTrackIndex];
+
+        titleEl.textContent = currentSong.title;
+        artistEl.textContent = currentSong.artist;
+        if (audioPlayer.src !== currentSong.audioUrl) {
+          audioPlayer.src = currentSong.audioUrl;
+          audioPlayer.load();
+        }
+
+        playlistDrawer.innerHTML = playlist.map((song, i) => `
+          <div class="playlist-item ${i === currentTrackIndex ? 'active' : ''}">
+            <div class="playlist-song-info" onclick="playSongIndex(${i})">
+              <span class="playlist-song-name">${i + 1}. ${song.title}</span>
+              <span class="playlist-song-artist">${song.artist}</span>
+            </div>
+            <button class="btn-danger" onclick="removeSong(${i})">Remove</button>
+          </div>
+        `).join("");
+      }
+
+      window.playSongIndex = (index) => {
+        currentTrackIndex = index;
+        renderPlaylist();
+        audioPlayer.play().then(() => {
+          playPauseBtn.textContent = "❚❚";
+          albumArtIcon.classList.add("playing");
+        }).catch(() => {});
+      };
+
+      window.removeSong = (index) => {
+        if (confirm("Remove this song from the playlist?")) {
+          playlist.splice(index, 1);
+          localStorage.setItem("our_universe_playlist", JSON.stringify(playlist));
+          if (currentTrackIndex >= playlist.length) currentTrackIndex = Math.max(0, playlist.length - 1);
+          audioPlayer.pause();
+          playPauseBtn.textContent = "▶";
+          albumArtIcon.classList.remove("playing");
+          renderPlaylist();
+        }
+      };
+
+      playPauseBtn.addEventListener("click", () => {
+        if (playlist.length === 0) {
+          alert("Please click '+ Add Song' first to add music to your playlist! ♡");
+          songModal.classList.remove("hidden");
+          return;
+        }
+
+        if (audioPlayer.paused) {
+          audioPlayer.play().then(() => {
+            playPauseBtn.textContent = "❚❚";
+            albumArtIcon.classList.add("playing");
+          }).catch(err => {
+            alert("Tap play again to start music! (Browsers require a tap to activate audio).");
+          });
+        } else {
+          audioPlayer.pause();
+          playPauseBtn.textContent = "▶";
+          albumArtIcon.classList.remove("playing");
+        }
+      });
+
+      prevSongBtn.addEventListener("click", () => {
+        if (playlist.length === 0) return;
+        currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+        renderPlaylist();
+        audioPlayer.play().then(() => {
+          playPauseBtn.textContent = "❚❚";
+          albumArtIcon.classList.add("playing");
+        }).catch(() => {});
+      });
+
+      nextSongBtn.addEventListener("click", () => {
+        if (playlist.length === 0) return;
+        currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+        renderPlaylist();
+        audioPlayer.play().then(() => {
+          playPauseBtn.textContent = "❚❚";
+          albumArtIcon.classList.add("playing");
+        }).catch(() => {});
+      });
+
+      audioPlayer.addEventListener("ended", () => {
+        if (playlist.length > 0) {
+          currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+          renderPlaylist();
+          audioPlayer.play().catch(() => {
+            playPauseBtn.textContent = "▶";
+            albumArtIcon.classList.remove("playing");
+          });
+        }
+      });
+
+      document.getElementById("song-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const title = document.getElementById("s-title").value.trim();
+        const artist = document.getElementById("s-artist").value.trim();
+        const fileInput = document.getElementById("s-file").files[0];
+
+        if (!fileInput) return;
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          playlist.push({
+            title: title || "Our Song",
+            artist: artist || "Special Dedication",
+            audioUrl: ev.target.result
+          });
+          try {
+            localStorage.setItem("our_universe_playlist", JSON.stringify(playlist));
+            renderPlaylist();
+            songModal.classList.add("hidden");
+            e.target.reset();
+            spawnHearts(15);
+          } catch (err) {
+            alert("This audio file is too large for browser storage limit (~5MB)! Try a shorter song or audio cut. ♡");
+          }
+        };
+        reader.readAsDataURL(fileInput);
+      });
+
+      // 4. LIVE RELATIONSHIP COUNTER
+      const START_DATE = new Date("2023-08-13T00:00:00");
+
+      function updateCounter() {
+        const now = new Date();
+        const diffMs = Math.max(0, now - START_DATE);
+
+        const totalSeconds = Math.floor(diffMs / 1000);
+        const totalMinutes = Math.floor(totalSeconds / 60);
+        const totalHours = Math.floor(totalMinutes / 60);
+        const totalDays = Math.floor(totalHours / 24);
+
+        const totalWeeks = Math.floor(totalDays / 7);
+        const weekRemDays = totalDays % 7;
+
+        let years = now.getFullYear() - START_DATE.getFullYear();
+        let months = now.getMonth() - START_DATE.getMonth();
+        let remDays = now.getDate() - START_DATE.getDate();
+
+        if (remDays < 0) {
+          const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+          remDays += prevMonth.getDate();
+          months--;
+        }
+        if (months < 0) {
+          months += 12;
+          years--;
+        }
+        const totalMonths = (years * 12) + months;
+        const decimalYears = (totalDays / 365.25).toFixed(2);
+
+        document.getElementById("c-years").textContent = years.toLocaleString();
+        document.getElementById("c-years-dec").textContent = `(${decimalYears} yrs)`;
+
+        document.getElementById("c-months").textContent = totalMonths.toLocaleString();
+        document.getElementById("c-months-rem").textContent = `& ${remDays} day${remDays === 1 ? '' : 's'}`;
+
+        document.getElementById("c-weeks").textContent = totalWeeks.toLocaleString();
+        document.getElementById("c-weeks-rem").textContent = `& ${weekRemDays} day${weekRemDays === 1 ? '' : 's'}`;
+
+        document.getElementById("c-days").textContent = totalDays.toLocaleString();
+        document.getElementById("c-hours").textContent = totalHours.toLocaleString();
+        document.getElementById("c-minutes").textContent = totalMinutes.toLocaleString();
+        document.getElementById("c-seconds").textContent = totalSeconds.toLocaleString();
+        document.getElementById("c-total-days").textContent = totalDays.toLocaleString();
+      }
+      setInterval(updateCounter, 1000);
+      updateCounter();
+
+      // 5. STORAGE & RENDER HELPERS
+      let memories = JSON.parse(localStorage.getItem("our_universe_photos") || "[]");
+      let notes = JSON.parse(localStorage.getItem("our_universe_notes") || "[]");
+      let journey = JSON.parse(localStorage.getItem("our_universe_journey") || JSON.stringify([
+        { date: "August 13, 2023", title: "The Beginning of Us", desc: "The day our forever officially started. ♡", imgUrl: "" },
+        { date: "June 30, 2024", title: "Our First Date", desc: "Magical moments, endless talks, and sweet smiles.", imgUrl: "" }
+      ]));
+      let specialDays = JSON.parse(localStorage.getItem("our_universe_days") || JSON.stringify([
+        { title: "Anniversary Celebration", date: "2027-08-13" },
+        { title: "First Date Anniversary", date: "2027-06-30" }
+      ]));
+
+      const galleryEl = document.getElementById("polaroid-gallery");
+      function renderGallery() {
+        if (memories.length === 0) {
+          galleryEl.innerHTML = `<div style="grid-column: 1/-1; background: var(--card-bg); padding: 2rem; border-radius: 20px; text-align: center; color: var(--text-muted); border: 2px dashed var(--lavender);"><p>No photos yet. Click '+ Add Photo Memory'!</p></div>`;
+          return;
+        }
+        galleryEl.innerHTML = memories.map((m, i) => `
+          <div class="polaroid-card">
+            <button class="delete-item-btn" onclick="deleteMemory(${i})">×</button>
+            <div class="polaroid-img-wrap"><img src="${m.imgUrl}" alt="${m.caption}" /></div>
+            <p class="polaroid-caption">${m.caption}</p>
+            <span class="polaroid-date">${m.date}</span>
+          </div>`).join("");
+      }
+      window.deleteMemory = (i) => { if(confirm("Remove this memory?")) { memories.splice(i,1); localStorage.setItem("our_universe_photos", JSON.stringify(memories)); renderGallery(); } };
+
+      const notesEl = document.getElementById("notes-wall");
+      function renderNotes() {
+        if (notes.length === 0) {
+          notesEl.innerHTML = `<div style="grid-column: 1/-1; background: var(--card-bg); padding: 2rem; border-radius: 20px; text-align: center; color: var(--text-muted); border: 2px dashed var(--lavender);"><p>No notes written yet. Share your first thought!</p></div>`;
+          return;
+        }
+        notesEl.innerHTML = notes.map((n, i) => `
+          <div class="note-card">
+            <button class="delete-item-btn" onclick="deleteNote(${i})">×</button>
+            <div class="note-author">By ${n.author}</div>
+            <div class="note-title">${n.title}</div>
+            <div class="note-text">${n.text}</div>
+            ${n.imgUrl ? `<img src="${n.imgUrl}" class="note-img" />` : ''}
+            <div class="note-date">${n.date}</div>
+          </div>`).join("");
+      }
+      window.deleteNote = (i) => { if(confirm("Delete note?")) { notes.splice(i,1); localStorage.setItem("our_universe_notes", JSON.stringify(notes)); renderNotes(); } };
+
+      const journeyEl = document.getElementById("timeline-list");
+      function renderJourney() {
+        journeyEl.innerHTML = journey.map((j, i) => `
+          <div class="timeline-item">
+            <button class="delete-item-btn" onclick="deleteJourney(${i})">×</button>
+            <div class="timeline-date">${j.date}</div>
+            <div class="timeline-title">${j.title}</div>
+            <div class="timeline-desc">${j.desc}</div>
+            ${j.imgUrl ? `<img src="${j.imgUrl}" class="timeline-img" />` : ''}
+          </div>`).join("");
+      }
+      window.deleteJourney = (i) => { if(confirm("Delete milestone?")) { journey.splice(i,1); localStorage.setItem("our_universe_journey", JSON.stringify(journey)); renderJourney(); } };
+
+      const daysEl = document.getElementById("days-grid");
+      function renderDays() {
+        daysEl.innerHTML = specialDays.map((d, i) => {
+          const target = new Date(d.date + "T00:00:00");
+          const now = new Date();
+          const diff = target - now;
+          const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          return `
+            <div class="day-card">
+              <button class="delete-item-btn" onclick="deleteDay(${i})">×</button>
+              <h4>${d.title}</h4>
+              <div class="day-date">${d.date}</div>
+              <div class="day-countdown">${daysLeft >= 0 ? `${daysLeft} days remaining ♡` : 'Passed ♡'}</div>
+            </div>`;
+        }).join("");
+      }
+      window.deleteDay = (i) => { if(confirm("Delete special day?")) { specialDays.splice(i,1); localStorage.setItem("our_universe_days", JSON.stringify(specialDays)); renderDays(); } };
+
+      const setupModal = (openBtnId, modalId, cancelBtnId) => {
+        document.getElementById(openBtnId).addEventListener("click", () => document.getElementById(modalId).classList.remove("hidden"));
+        document.getElementById(cancelBtnId).addEventListener("click", () => document.getElementById(modalId).classList.add("hidden"));
+      };
+      setupModal("open-upload-modal", "upload-modal", "c-photo");
+      setupModal("open-note-modal", "note-modal", "c-note");
+      setupModal("open-journey-modal", "journey-modal", "c-journey");
+      setupModal("open-day-modal", "day-modal", "c-day");
+
+      document.getElementById("photo-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const file = document.getElementById("p-file").files[0];
+        const caption = document.getElementById("p-caption").value;
+        const date = document.getElementById("p-date").value;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          memories.unshift({ imgUrl: ev.target.result, caption, date });
+          localStorage.setItem("our_universe_photos", JSON.stringify(memories));
+          renderGallery();
+          e.target.reset();
+          document.getElementById("upload-modal").classList.add("hidden");
+          spawnHearts(10);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById("note-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const author = document.getElementById("n-author").value;
+        const title = document.getElementById("n-title").value;
+        const text = document.getElementById("n-text").value;
+        const file = document.getElementById("n-file").files[0];
+        const date = new Date().toLocaleDateString();
+
+        const saveNote = (imgUrl = "") => {
+          notes.unshift({ author, title, text, imgUrl, date });
+          localStorage.setItem("our_universe_notes", JSON.stringify(notes));
+          renderNotes();
+          e.target.reset();
+          document.getElementById("note-modal").classList.add("hidden");
+          spawnHearts(10);
+        };
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => saveNote(ev.target.result);
+          reader.readAsDataURL(file);
+        } else {
+          saveNote();
+        }
+      });
+
+      document.getElementById("journey-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const date = document.getElementById("j-date").value;
+        const title = document.getElementById("j-title").value;
+        const desc = document.getElementById("j-desc").value;
+        const file = document.getElementById("j-file").files[0];
+
+        const saveJ = (imgUrl = "") => {
+          journey.push({ date, title, desc, imgUrl });
+          localStorage.setItem("our_universe_journey", JSON.stringify(journey));
+          renderJourney();
+          e.target.reset();
+          document.getElementById("journey-modal").classList.add("hidden");
+          spawnHearts(10);
+        };
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => saveJ(ev.target.result);
+          reader.readAsDataURL(file);
+        } else {
+          saveJ();
+        }
+      });
+
+      document.getElementById("day-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const title = document.getElementById("d-title").value;
+        const date = document.getElementById("d-date").value;
+        specialDays.push({ title, date });
+        localStorage.setItem("our_universe_days", JSON.stringify(specialDays));
+        renderDays();
+        e.target.reset();
+        document.getElementById("day-modal").classList.add("hidden");
+        spawnHearts(10);
+      });
+
+      document.getElementById("random-memory-btn").addEventListener("click", () => {
+        const combined = [...memories, ...notes, ...journey];
+        if (combined.length === 0) {
+          alert("Add some memories or notes first, love! ♡");
+          return;
+        }
+        const item = combined[Math.floor(Math.random() * combined.length)];
+        document.getElementById("random-body").innerHTML = `
+          <h4 style="font-family: var(--font-serif); color: var(--deep-pink); margin-bottom:0.25rem;">${item.caption || item.title || "Sweet Memory"}</h4>
+          <p style="font-size:0.9rem; color:var(--text-main);">${item.text || item.desc || ""}</p>
+        `;
+        document.getElementById("random-preview").classList.remove("hidden");
+        spawnHearts(10);
+      });
+      document.getElementById("close-random").addEventListener("click", () => document.getElementById("random-preview").classList.add("hidden"));
+
+      renderGallery();
+      renderNotes();
+      renderJourney();
+      renderDays();
+      renderPlaylist();
+    });
+  </script>
+</body>
+</html>
