@@ -719,7 +719,7 @@
         reader.readAsDataURL(file);
       });
 
-      // 3. MULTI-SONG PLAYLIST MUSIC PLAYER
+      // 3. MULTI-SONG PLAYLIST MUSIC PLAYER (WITH DEFAULT STARTER TRACKS IF EMPTY)
       const songModal = document.getElementById("song-modal");
       const openSongModalBtn = document.getElementById("open-song-modal");
       
@@ -739,7 +739,16 @@
       const albumArtIcon = document.getElementById("album-art-icon");
       const playlistDrawer = document.getElementById("playlist-drawer");
 
-      let playlist = JSON.parse(localStorage.getItem("our_universe_playlist") || "[]");
+      // Default starter playlist if none exists in storage yet
+      let defaultPlaylist = [
+        {
+          title: "Our Special Song",
+          artist: "Feriane & Mariane ♡",
+          audioUrl: "" // Add your mp3 link here if you want a default link
+        }
+      ];
+
+      let playlist = JSON.parse(localStorage.getItem("our_universe_playlist") || JSON.stringify(defaultPlaylist));
       let currentTrackIndex = 0;
 
       function renderPlaylist() {
@@ -759,7 +768,7 @@
 
         titleEl.textContent = currentSong.title;
         artistEl.textContent = currentSong.artist;
-        if (audioPlayer.src !== currentSong.audioUrl) {
+        if (currentSong.audioUrl && audioPlayer.src !== currentSong.audioUrl) {
           audioPlayer.src = currentSong.audioUrl;
           audioPlayer.load();
         }
@@ -778,10 +787,14 @@
       window.playSongIndex = (index) => {
         currentTrackIndex = index;
         renderPlaylist();
-        audioPlayer.play().then(() => {
-          playPauseBtn.textContent = "❚❚";
-          albumArtIcon.classList.add("playing");
-        }).catch(() => {});
+        if (playlist[currentTrackIndex].audioUrl) {
+          audioPlayer.play().then(() => {
+            playPauseBtn.textContent = "❚❚";
+            albumArtIcon.classList.add("playing");
+          }).catch(() => {});
+        } else {
+          alert("Please upload an audio file for this track first! ♡");
+        }
       };
 
       window.removeSong = (index) => {
@@ -797,8 +810,8 @@
       };
 
       playPauseBtn.addEventListener("click", () => {
-        if (playlist.length === 0) {
-          alert("Please click '+ Add Song' first to add music to your playlist! ♡");
+        if (playlist.length === 0 || !playlist[currentTrackIndex].audioUrl) {
+          alert("Please click '+ Add Song' to attach a valid MP3 file to your playlist! ♡");
           songModal.classList.remove("hidden");
           return;
         }
@@ -821,30 +834,36 @@
         if (playlist.length === 0) return;
         currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
         renderPlaylist();
-        audioPlayer.play().then(() => {
-          playPauseBtn.textContent = "❚❚";
-          albumArtIcon.classList.add("playing");
-        }).catch(() => {});
+        if (playlist[currentTrackIndex].audioUrl) {
+          audioPlayer.play().then(() => {
+            playPauseBtn.textContent = "❚❚";
+            albumArtIcon.classList.add("playing");
+          }).catch(() => {});
+        }
       });
 
       nextSongBtn.addEventListener("click", () => {
         if (playlist.length === 0) return;
         currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
         renderPlaylist();
-        audioPlayer.play().then(() => {
-          playPauseBtn.textContent = "❚❚";
-          albumArtIcon.classList.add("playing");
-        }).catch(() => {});
+        if (playlist[currentTrackIndex].audioUrl) {
+          audioPlayer.play().then(() => {
+            playPauseBtn.textContent = "❚❚";
+            albumArtIcon.classList.add("playing");
+          }).catch(() => {});
+        }
       });
 
       audioPlayer.addEventListener("ended", () => {
         if (playlist.length > 0) {
           currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
           renderPlaylist();
-          audioPlayer.play().catch(() => {
-            playPauseBtn.textContent = "▶";
-            albumArtIcon.classList.remove("playing");
-          });
+          if (playlist[currentTrackIndex].audioUrl) {
+            audioPlayer.play().catch(() => {
+              playPauseBtn.textContent = "▶";
+              albumArtIcon.classList.remove("playing");
+            });
+          }
         }
       });
 
